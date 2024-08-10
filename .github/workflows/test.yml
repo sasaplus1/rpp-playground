@@ -21,6 +21,6 @@ jobs:
           git
           ninja-build
           python3
-      - run: sudo git clone -b master --recurse-submodules https://github.com/raspberrypi/pico-sdk.git $PICO_SDK_PATH
+      - run: git clone -b master --recurse-submodules https://github.com/raspberrypi/pico-sdk.git $PICO_SDK_PATH
       - uses: actions/checkout@v4
       - run: make build
