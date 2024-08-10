@@ -11,13 +11,30 @@ set(CMAKE_CXX_STANDARD 17)
 
 pico_sdk_init()
 
+include(FetchContent)
+FetchContent_Declare(
+  pico_ssd1306
+  GIT_REPOSITORY https://github.com/daschr/pico-ssd1306.git
+  GIT_TAG 8467f5b06ebd7bfa7b53e4ebc83dfdc6f396e4eb
+  GIT_PROGRESS TRUE
+)
+FetchContent_MakeAvailable(pico_ssd1306)
+
 add_executable(${PROJECT_NAME}
   main.c
+  ${CMAKE_BINARY_DIR}/_deps/pico_ssd1306-src/ssd1306.c
 )
 
 pico_enable_stdio_usb(main 1)
 pico_enable_stdio_uart(main 0)
 
-target_link_libraries(${PROJECT_NAME} pico_stdlib)
+target_include_directories(${PROJECT_NAME} PUBLIC
+  ${CMAKE_BINARY_DIR}/_deps/pico_ssd1306-src
+)
+
+target_link_libraries(${PROJECT_NAME}
+  pico_stdlib
+  hardware_i2c
+)
 
 pico_add_extra_outputs(main)
