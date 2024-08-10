@@ -8,7 +8,7 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      PICO_SDK_PATH: ./pico-sdk
+      PICO_SDK_PATH: /pico-sdk
       PICO_TOOLCHAIN_PATH: /usr/bin/arm-none-eabi-gcc
     steps:
       - run: sudo apt-get --yes update
