@@ -8,12 +8,12 @@ jobs:
   test:
     runs-on: ubuntu-latest
     env:
-      PICO_SDK_PATH: /pico-sdk
+      PICO_SDK_PATH: ./pico-sdk
       PICO_TOOLCHAIN_PATH: /usr/bin/arm-none-eabi-gcc
     steps:
-      - run: apt-get --yes update
+      - run: sudo apt-get --yes update
       - run: >
-          apt-get --yes install
+          sudo apt-get --yes install
           gcc-arm-none-eabi
           libnewlib-arm-none-eabi
           cmake
@@ -21,6 +21,6 @@ jobs:
           git
           ninja-build
           python3
-      - run: git clone -b master --recurse-submodules https://github.com/raspberrypi/pico-sdk.git /pico-sdk
+      - run: sudo git clone -b master --recurse-submodules https://github.com/raspberrypi/pico-sdk.git $PICO_SDK_PATH
       - uses: actions/checkout@v4
       - run: make build
