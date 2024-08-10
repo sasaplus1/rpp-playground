@@ -53,3 +53,8 @@ modules.order
 Module.symvers
 Mkfile.old
 dkms.conf
+
+### sasaplus1/rpp-playground
+
+/build/*
+!/build/.gitkeep
