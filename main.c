@@ -2,21 +2,18 @@
 
 const uint LED = 25;
 
-void
-setup_led() {
+void setup_led() {
   gpio_init(LED);
   gpio_set_dir(LED, GPIO_OUT);
   gpio_put(LED, 0);
 }
 
-void
-toggle_led() {
+void toggle_led() {
   int led = gpio_get(LED);
   gpio_put(LED, led > 0 ? 0 : 1);
 }
 
-int
-main() {
+int main() {
   stdio_init_all();
 
   setup_led();
