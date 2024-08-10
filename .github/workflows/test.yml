@@ -23,4 +23,5 @@ jobs:
           python3
       - run: git clone -b master --recurse-submodules https://github.com/raspberrypi/pico-sdk.git "$PICO_SDK_PATH"
       - uses: actions/checkout@v4
+      - run: find . -type f -name 'pico_sdk_import.cmake' -print || true
       - run: make build
