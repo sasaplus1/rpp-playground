@@ -6,6 +6,9 @@ project(main C CXX ASM)
 set(CMAKE_C_STANDARD 11)
 set(CMAKE_CXX_STANDARD 17)
 
+# No need define when use Pico
+#add_definitions(-DPICO_BOARD=pico)
+
 pico_sdk_init()
 
 add_executable(${PROJECT_NAME}
