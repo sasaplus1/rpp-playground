@@ -25,12 +25,13 @@ add_executable(${PROJECT_NAME}
   ${CMAKE_BINARY_DIR}/_deps/pico_ssd1306-src/ssd1306.c
 )
 
-pico_enable_stdio_usb(main 1)
+# set 0 when use tinyusb
+pico_enable_stdio_usb(main 0)
 pico_enable_stdio_uart(main 0)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
+  ${CMAKE_CURRENT_LIST_DIR}
   ${CMAKE_BINARY_DIR}/_deps/pico_ssd1306-src
-# $ENV{PICO_SDK_PATH}/lib/tinyusb/src
 )
 
 target_link_libraries(${PROJECT_NAME}
