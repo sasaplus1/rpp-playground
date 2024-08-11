@@ -10,8 +10,9 @@ RUN apt-get --yes update && apt-get --yes install \
   python3 \
   && apt-get clean
 
-RUN git clone -b master --recurse-submodules \
-  https://github.com/raspberrypi/pico-sdk.git /pico-sdk
+RUN git clone -b master https://github.com/raspberrypi/pico-sdk.git /pico-sdk \
+  && cd /pico-sdk \
+  && git submodule update --init --recursive
 
 WORKDIR /rpi
 
