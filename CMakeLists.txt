@@ -30,11 +30,14 @@ pico_enable_stdio_uart(main 0)
 
 target_include_directories(${PROJECT_NAME} PUBLIC
   ${CMAKE_BINARY_DIR}/_deps/pico_ssd1306-src
+# $ENV{PICO_SDK_PATH}/lib/tinyusb/src
 )
 
 target_link_libraries(${PROJECT_NAME}
   pico_stdlib
   hardware_i2c
+  tinyusb_device
+  tinyusb_board
 )
 
 pico_add_extra_outputs(main)

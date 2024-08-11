@@ -2,6 +2,9 @@
 #include "pico/stdlib.h"
 #include "hardware/i2c.h"
 #include "hardware/timer.h"
+#include "hardware/irq.h"
+#include "hardware/gpio.h"
+#include "tusb.h"
 #include "ssd1306.h"
 
 // LED {{{
@@ -83,13 +86,108 @@ void loop_oled() {
 }
 // }}}
 
+// HID keyboard {{{
+const uint KEY1 = 2;
+const uint KEY2 = 3;
+const uint KEY3 = 4;
+const uint KEY4 = 5;
+
+const uint key_a = 0x04;
+const uint key_b = 0x05;
+const uint key_c = 0x06;
+const uint key_d = 0x07;
+
+void gpio_callback(uint gpio, uint32_t events);
+
+void setup_hid() {
+  gpio_init(KEY1);
+  gpio_set_dir(KEY1, GPIO_IN);
+  gpio_pull_up(KEY1);
+
+  gpio_init(KEY2);
+  gpio_set_dir(KEY2, GPIO_IN);
+  gpio_pull_up(KEY2);
+
+  gpio_init(KEY3);
+  gpio_set_dir(KEY3, GPIO_IN);
+  gpio_pull_up(KEY3);
+
+  gpio_init(KEY4);
+  gpio_set_dir(KEY4, GPIO_IN);
+  gpio_pull_up(KEY4);
+
+  gpio_set_irq_enabled_with_callback(KEY1, GPIO_IRQ_EDGE_FALL | GPIO_IRQ_EDGE_RISE, true, &gpio_callback);
+  gpio_set_irq_enabled_with_callback(KEY2, GPIO_IRQ_EDGE_FALL | GPIO_IRQ_EDGE_RISE, true, &gpio_callback);
+  gpio_set_irq_enabled_with_callback(KEY3, GPIO_IRQ_EDGE_FALL | GPIO_IRQ_EDGE_RISE, true, &gpio_callback);
+  gpio_set_irq_enabled_with_callback(KEY4, GPIO_IRQ_EDGE_FALL | GPIO_IRQ_EDGE_RISE, true, &gpio_callback);
+}
+
+void gpio_callback(uint gpio, uint32_t events) {
+  static bool curr_keycode[4] = {0};
+  static bool prev_keycode[4] = {0};
+
+  if (!tud_hid_ready() || !events) {
+    return;
+  }
+
+  // FALL => keydown / RISE => keyup
+  switch (gpio) {
+    case KEY1:
+      curr_keycode[0] = GPIO_IRQ_EDGE_FALL ? true : false;
+      break;
+    case KEY2:
+      curr_keycode[1] = GPIO_IRQ_EDGE_FALL ? true : false;
+      break;
+    case KEY3:
+      curr_keycode[2] = GPIO_IRQ_EDGE_FALL ? true : false;
+      break;
+    case KEY4:
+      curr_keycode[3] = GPIO_IRQ_EDGE_FALL ? true : false;
+      break;
+  }
+
+  if (memcmp(curr_keycode, prev_keycode, sizeof(curr_keycode)) != 0) {
+    for (int i = 0; i <= 4; i++) {
+      prev_keycode[i] = curr_keycode[i];
+    }
+
+    uint8_t keycode[4] = {0};
+
+    int i = 0;
+
+    if (curr_keycode[0]) {
+      keycode[i] = key_a;
+      i++;
+    }
+    if (curr_keycode[1]) {
+      keycode[i] = key_b;
+      i++;
+    }
+    if (curr_keycode[2]) {
+      keycode[i] = key_c;
+      i++;
+    }
+    if (curr_keycode[3]) {
+      keycode[i] = key_d;
+      i++;
+    }
+
+    tud_hid_keyboard_report(0, 0, keycode);
+  }
+}
+// }}}
+
 int main() {
   stdio_init_all();
+  tusb_init();
 
   setup_led();
   setup_oled();
+  setup_hid();
 
   while (1) {
+    tud_task();
+    hid_task();
     loop_oled();
   }
 
