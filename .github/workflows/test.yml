@@ -21,8 +21,9 @@ jobs:
           git
           ninja-build
           python3
+      - uses: actions/checkout@v4
       - run: git clone -b master https://github.com/raspberrypi/pico-sdk.git "$PICO_SDK_PATH"
       - run: git submodule update --init --recursive
         working-directory: ${{ env.PICO_SDK_PATH }}
-      - uses: actions/checkout@v4
       - run: make build
+      - run: test -f build/main.uf2
