@@ -6,7 +6,7 @@ practice Raspberry Pi Pico programming with C
 
 ```sh
 $ make docker
-# make build
+# make build # execute within Docker container
 ```
 
 ## License
